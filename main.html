@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>New Webpage</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Lato', arial;
+            }
+            header {
+                /*background: rgb(99, 141, 168);*/
+                /*background: rgb(37, 47, 61);*/
+                background: rgb(49, 68, 83);
+                padding: 25px 40px;
+                /*color: rgb(240, 240, 240);*/
+                color: white;
+            }
+            #intro {
+                margin: 0px 30px;
+            }
+            article {
+                padding: 30px;
+            }
+            section {
+                margin: 0px 0px 60px;
+            }
+            .endpoint-child {
+                /*background: rgb(95, 185, 230);*/
+                background: rgb(49, 68, 83);
+                padding: 15px;
+                border-radius: 4px;
+                margin: 10px 0px;
+                color: white;
+                position: relative;
+            }
+            .cover {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                left: 0px;
+                /*border: 1px solid red;*/
+                height: 48px;
+                background: transparent;
+                border-radius: 4px;
+            }
+            .cover:hover {
+                cursor: pointer;
+            }
+            .endpoint-child:hover {
+                /*background: rgb(76, 89, 99);*/
+            }
+            .endpoint-child .endpoint-div {
+                width: 70%;
+                display: inline-block;
+            }
+            .endpoint-child .endpoint-div p {
+                display: inline;
+            }
+            .endpoint-child .get, .put, .post, .delete, .auth, .open {
+                /*background: rgb(219, 137, 65);*/
+                /*background: rgb(209, 147, 59);*/
+                /*background: rgb(210, 74, 69);*/
+                /*background: rgb(70, 168, 191);*/
+                /*background: rgb(49, 125, 212);*/
+                
+                /*color: black;*/
+                font-size: 12px;
+                padding: 3px 5px;
+                border-radius: 3px;
+                margin: 0px 3px;
+                float: right;
+            }
+            .dropdown {
+                width: 100%;
+                display: none;
+                /*opacity: 0;*/
+                /*transition: height 0.5s;*/
+                overflow: hidden;
+                /*height: 0px;*/
+            }
+            .dropdown h2 {
+                font-weight: 300;
+                margin: 20px 0px;
+            }
+            code {
+                font-family: 'Inconsolata';
+                font-size: 14px;
+            }
+            .dropdown p code {
+                padding: 1px 2px;
+                border-radius: 3px;
+                background: rgb(40, 44, 53);
+                color: rgb(171, 178, 182);
+            }
+            .dropdown pre code {
+                padding: 6px;
+                border-radius: 4px;
+                white-space: pre-wrap;
+            }
+            .dropdown pre code span {
+                float: none;
+            }
+            .get {
+                background: rgb(65, 209, 86);
+            }
+            .post, .put {
+                background: rgb(222, 60, 222);
+            }
+            .delete {
+                background: rgb(207, 64, 64);
+            }
+            .auth {
+                background: rgb(227, 156, 57);
+            }
+            .open {
+                background: rgb(99, 193, 255);
+            }
+            footer {
+                background: rgb(49, 68, 83);
+                color: white;
+                padding: 12px;
+                text-align: center;
+            }
+            a {
+                color: white;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>KA Internal API Explorer</h1>
+        </header>
+        <section id="intro">
+            <p>Welcome to the unofficial KA Internal API documentation! If you're wondering if certain data can be accessed, if some endpoint requires authorization, or just want to know more about the API, you've come to the right place!</p>
+            <p>In this webpage, every known API endpoint that the KA website uses is documented and described. If you happen to find a new one that isn't here, please leave a comment with some specifics like where you found it, how it can be triggered, and some technical info about the web request itself.</p>
+            <p>Here's a key that explains some terms used in these docs:</p>
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+            <p>And now for the docs!</p>
+        </section>
+        
+        <article id="endpoint-container"></article>
+        
+        <footer>All code by <a href="https://www.khanacademy.org/profile/JettBurns14/projects">Jett Burns</a>. <a href="https://www.khanacademy.org/cs/api/6389992281473024">Original API ref</a> by <a href="https://www.khanacademy.org/profile/MatthiasSaihttam/projects">Matthias</a> and many other contributors.</footer>
+    </body>
+    <script>
+        // Open all links in new tab
+        var links = document.getElementsByTagName('a');
+        for (var i = 0; i < links.length; i++) {
+            links[i].setAttribute('target', '_blank');
+        }
+        
+        // Main object that stores all endpoints and
+        // their info.
+        
+        // ** To the guys helping **
+        // Escape the JSON here:
+        // https://www.browserling.com/tools/json-escape
+        
+        // Include your own description of the endpoint and 
+        // its data inside <p></p> elements.
+        // Paste escaped JSON in the .description prop of 
+        // each endpoint, inside the <pre><code></code></pre>. 
+        var endpointObj = {
+            'User' : {
+                id: 'user',
+                description: 'All User endpoints take either <code>?kaid=&ltkaid&gt</code>, <code>?username=&ltusername&gt</code>, <code>?email=&ltemail&gt</code>, or <code>?userId=http://googleid.khanacademy.org/&ltuserid&gt</code>',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/user/profile',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: 'Receive JSON with user info',
+                        description: '<p>Get user info like showcase badges, points, videos watched, KAID, avatar, and much more. If a request body with credentials is sent, even more interesting data can be viewed. Some of response body props:</p><pre><code>{\n\t"countVideosCompleted": 224,\n\t"soundOn": false,\n\t"autocontinueOn": false,\n\t"backgroundSrc": "https://cdn.kastatic.org/images/profile/backgrounds/bg-cosmos.jpg",\n\t"streakLastLength": 3,\n\t"avatarName": "spunky_sam_blue_style",\n\t"streakLength": 0,\n\t"globalPermissions": [ ],\n\t"streakLastExtended": "2018-05-04",\n\t"profileRoot": "/profile/sal/",\n\t"username": "sal",\n\t"bio": "Founder & Executive Director",\n\t"backgroundName": "cosmos",\n\t"nickname": "Sal Khan",\n\t"hasStudents": true,\n\t"prefersReducedMotion": false,\n\t"dateJoined": "2011-08-24T16:18:13Z",\n\t"avatarSrc": "https://cdn.kastatic.org/images/avatars/svg/spunky-sam.svg",\n\t"points": 120885754,\n\t"kaid": "kaid_326465577260382527912172"\n\t// ...\n}</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/profile',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: 'Saves updated profile info',
+                        description: '<p>Request body</p><pre><code>{\n\t"affiliation": {\n\t\t"eduorgKeyId": "",\n\t\t"eduorgLocationText": "", \n\t\t"eduorgName": "",\n\t\t"eduorgPostalCode": ""\n\t},\n\t"avatarName": "...",\n\t"backgroundName": "...",\n\t"bio": "...",\n\t"hideVisual": false,\n\t"isPublic": true,\n\t"kaid": "...",\n\t"nickname": "...",\n\t"userKey": "...",\n\t"userLocation": {\n\t\t"city": "",\n\t\t"country": "",\n\t\t"displayText": "",\n\t\t"googlePlacesId":"",\n\t\t"lastModified":"...",\n\t\t"latLng": {\n\t\t\t"lat": null,\n\t\t\t"lng": null\n\t\t},\n\t\t"lat": null,\n\t\t"lng": null,\n\t\t"postalCode": "",\n\t\t"state": ""\n\t},\n\t"username":"..."\n}</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/comments', 
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: 'Retreive JSON with user comments',
+                        description: '<p>Gets an array of top 10 most voted Tips & Thanks (comments) posted by the user. Appending <code>page=&ltpage&gt</code> to the URL gets another 10 comments. </p><pre><code>[\n    {\n        \"authorKaid\": \"kaid_326465577260382527912172\", \n        \"notifyOnAnswer\": true, \n        \"focus\": {\n            \"topicUrl\": \"\/science\/physics\/electric-charge-electric-force-and-voltage\/electric-potential-voltage\"\n            // ...\n        },\n        \"definitelyNotSpam\": true,\n        \"answerCount\": 0, \n        \"appearsAsDeleted\": null, \n        \"lowQualityScore\": 0.10845839080459771, \n        \"content\": \"Yes, to be more correct I should have specified that 5 N\/c is just the magnitude of the electric field.  I could have added \\\"upwards\\\" after it to make it a vector expression.\", \n        \"replyCount\": 8,\n        \"badges\": [], \n        \"type\": \"comment\",\n        \"authorNickname\": \"Sal Khan\",\n        \"numberOfFlags\": 0,\n        \"isOld\": true,\n        \"sumVotesIncremented\": 28, \n        \"flaggedByUser\": false, \n        \"flags\": [], \n        \"qualityKind\": \"normal\"\n        // ...\n    },\n    // ...\n]</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/badges',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/badges/public',
+                        access: 'Auth Required',
+                        method: 'PUT',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/discussion/summary',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/discussion/statistics',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/answers', 
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/scratchpads',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '<p>Gets 40 programs by provided user. Can take <code>sort=2</code>, <code>page=0</code>, <code>limit=40</code>, and/or <code>subject=all</code> prarms. <code>sort=</code> only takes <code>1</code> to sort by votes, or <code>2</code> for date. <code>page=</code> only takes the corresponding page number you want to view; <code>0</code> is default, numbers greater than that show the next 40 programs.</p><pre><code>{\n\t\n}</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/projectquestions',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/username_available',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                        // Deprecated tag here
+                    },
+                    {
+                        endpoint: '/api/internal/user/replies',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/projectanswers', 
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/questions', 
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/streak',
+                        access: 'Auth Required',
+                        method: 'GET',
+                        head: 'Get user\'s streak',
+                        description: '<p>Request body:</p><pre><code>{\n\t"days": 100,\n\t"history": [\n\t\t[\n\t\t\t"2018-01-01",\n\t\t\t"2018-04-01"\n\t\t],\n\t\t...\n\t]\n}</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/coaches', 
+                        access: 'Auth Required', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/notifications', 
+                        access: 'Auth Required', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/notifications/clear_brand_new',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: 'Clear new notifications',
+                        description: '<p>Request body:</p><pre><code>true</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/invitechild', 
+                        access: 'Auth Required', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/<kaid>/profile/widgets', 
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/<kaid>/skills', 
+                        access: 'Auth Required', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '<p>Takes <code>tz_offset=</code><br>Request body:</p><pre><code>{\n\t"exerciseData": {\n\t\t...\n\t},\n\t"studentsByKey": {\n\t\t...\n\t}\n}</code></pre>'
+                    },
+                    {
+                        endpoint: '/api/internal/user/<kaid>/progress', 
+                        access: 'Auth Required', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '<p>Takes <code>dt_start=</code>, <code>dt_end=</code>, and <code>tz_offset=</code></p>'
+                    },
+                    {
+                        endpoint: '? /api/internal/user/exercises/<exercise-name>/problems/<problem-number>/attempt',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/user/exercises/<exercise-name>/cards/begin',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ],
+            },
+            'Scratchpads': {
+                id: 'scratchpads',
+                description: 'Scratchpads description',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/scratchpads',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/<program-id>',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/<program-id>',
+                        access: 'Auth Required',
+                        method: 'PUT',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/<program-id>',
+                        access: 'Auth Required',
+                        method: 'DELETE',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/<program-id>/top-forks',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/<program-id>/user-forks',
+                        access: 'Auth Required',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/top',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/scratchpads/documentation/titles',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/scratchpads/user-projects-by-status',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Show_scratchpad': {
+                id: 'show_scratchpad',
+                description: 'Get info not just about a program, but also the author.',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/show_scratchpad',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Discussions': {
+                id: 'discussions',
+                description: 'Get info about discussion.',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/discussions/<KAencrypted-ID>/replies',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/<KAencrypted-ID>/replies',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/scratchpad/<program-id>/projectfeedback',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/scratchpad/<program-id>/questions',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/scratchpad/<program-id>/comments',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/scratchpad/<program-id>/comments/<KAencrypted-ID>',
+                        access: 'Auth Required',
+                        method: 'PUT',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/discussions/scratchpad/<program-id>/article',
+                        access: '?',
+                        method: '?',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/discussions/scratchpad/<program-id>/video/<video-name>/comments',
+                        access: '?',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/voteentity',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/youtubevideo/<video-id>/clarifications',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/discussions/youtubevideo/<video-id>/clarifications',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Moderation': {
+                id: 'moderation',
+                description: 'It\'s hard to get these endpoints since only Guardians use them, but one was found in the KA source code.',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/moderation/sendMessage',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Exercises': {
+                id: 'exercises',
+                description: '',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/exercises/',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        // can use auth to get user's progress
+                        endpoint: '/api/internal/user/exercises/<exercise-name>/cards/begin',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/user/exercises/<exercise-name>/problems/<problem-number>/assessment_item',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '/api/internal/exercises/math_topics_and_exercises',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: 'View all exercises and topics',
+                        description: 'Idk'
+                    }
+                ]
+            },
+            'Topics': {
+                id: 'topics',
+                description: '',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/topics/subjects_with_content_types',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Videos': {
+                id: 'videos',
+                description: 'Video description',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/videos/<video_id>',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Feedback': {
+                id: 'feedback',
+                description: 'Feedback description',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/feedback/<KAencrypted-ID>',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Projecteval': {
+                id: 'projecteval',
+                description: 'Project evaluations description',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/projecteval',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Projecthelp': {
+                id: 'projecthelp',
+                description: 'Project Help Request description',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/projecthelp',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Avatars': {
+                id: 'avatars',
+                description: 'Avatars description',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/avatar_parts',
+                        access: 'Open Access',
+                        method: 'GET'
+                    }
+                ]
+            },
+            // Maybe use miscellaneous section
+            'Ping': {
+                id: 'ping',
+                description: 'Ping description',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/ping',
+                        access: 'Open Access',
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Bigbingo': {
+                id: 'bigbingo',
+                description: '',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/_bb/bigbingo/mark_conversions',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'GraphQL': {
+                id: 'graphql',
+                description: '',
+                endpoints: [
+                    {
+                        endpoint: '? api/internal/graphql',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            '_mt': {
+                id: '_mt',
+                description: '',
+                endpoints: [
+                    {
+                        endpoint: '? /api/internal/_mt/elog',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/_mt/page_perf_log',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    },
+                    {
+                        endpoint: '? /api/internal/_mt/user/exercises/<exercise-name>/problems/<problem-number>/attempt',
+                        access: 'Auth Required',
+                        method: 'POST',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+            'Signup': {
+                id: 'signup',
+                description: 'Signup description',
+                endpoints: [
+                    {
+                        endpoint: '/api/internal/signup/check-username',
+                        access: 'Open Access', 
+                        method: 'GET',
+                        head: '[Test]',
+                        description: '[Test]'
+                    }
+                ]
+            },
+        };
+        var endpointBox = document.getElementById('endpoint-container');
+        
+        // Creates necessary HTML elements via JS, and appends
+        // to endpoint-container when called.
+        function addSection(name, id, desc) {
+            var section = document.createElement('section');
+            section.id = id;
+            var head = document.createElement('h2');
+            head.textContent = name;
+            var descEl = document.createElement('p');
+            descEl.innerHTML = desc;
+            section.appendChild(head);
+            section.appendChild(descEl);
+            endpointBox.appendChild(section);
+        };
+        // Creates necessary HTML elements via JS, and appends
+        // to a specified <section> element (above) when called.
+        function addEndpoint(parentId, endpoint, access, method, dropdownHead, dropdownDesc) {
+            var childEl = document.createElement('div');
+            childEl.className = "endpoint-child";
+            
+            var endpointDiv = document.createElement('div');
+            endpointDiv.className = "endpoint-div";
+            var endpointEl = document.createElement('p');
+            endpointEl.textContent = endpoint;
+            var accessEl = document.createElement('span');
+            if (access === "Auth Required") {
+                accessEl.className = "auth";
+            } else {
+                accessEl.className = "open";
+            }
+            accessEl.textContent = access;
+            
+            var methodEl = document.createElement('span');
+            methodEl.className = method.toLowerCase();
+            methodEl.textContent = method;
+            
+            var dropdownEl = document.createElement('div');
+            dropdownEl.className = "dropdown";
+            
+            var dropdownHeadEl = document.createElement('h2');
+            dropdownHeadEl.textContent = dropdownHead;
+            
+            var dropdownDescEl = document.createElement('p');
+            dropdownDescEl.innerHTML = dropdownDesc;
+            
+            // This element saved me a lot of trouble ;)
+            var coverEl = document.createElement('div');
+            coverEl.className = "cover";
+            
+            dropdownEl.appendChild(dropdownHeadEl);
+            dropdownEl.appendChild(dropdownDescEl);
+            endpointDiv.appendChild(endpointEl);
+            childEl.appendChild(endpointDiv);
+            childEl.appendChild(methodEl);
+            childEl.appendChild(accessEl);
+            childEl.appendChild(dropdownEl);
+            childEl.appendChild(coverEl);
+            
+            var parentEl = document.getElementById(parentId);
+            parentEl.appendChild(childEl)
+        };
+        
+        // Get all keys in main endpoint object.
+        var sections = Object.keys(endpointObj);
+        // Loop through these keys
+        for (var s = 0; s < sections.length; s++) {
+            // Get value (object in this case) of current 
+            // key on this iteration.
+            var obj = endpointObj[sections[s]]
+            // Add sections accordingly on each iteration.
+            addSection(sections[s], obj.id, obj.description);
+            // Loop through endpoints in current section.
+            for (var e = 0; e < obj.endpoints.length; e++) {
+                // Add endpoints into sections.
+                addEndpoint(obj.id, obj.endpoints[e].endpoint, obj.endpoints[e].access, obj.endpoints[e].method, obj.endpoints[e].head, obj.endpoints[e].description);
+            }
+        }
+        
+        //var endpoints = document.getElementsByClassName('endpoint-child');
+        var endpoints = document.getElementsByClassName('cover');
+        
+        // Since users might want to compare more than one
+        // endpoint, I won't use this function to hide
+        // open dropdowns when another is opened.
+        /*function openDropdown(endpoint) {
+            for (var i = 0; i < endpoints.length; i++) {
+                endpoints[i].children[3].style.display = "none";
+            }
+            endpoint.display = "block";
+        };*/
+        
+        // Check for clicks on all endpoint covers.
+        for (var i = 0; i < endpoints.length; i++) {
+            endpoints[i].addEventListener('click', function(e) {
+                //var dropdown = e.target.parentNode.children[3].style;
+                var dropdown = e.target.previousSibling.style;
+                // If the dropdown isn't displayed, display it.
+                // Hide otherwise.
+                if (dropdown.display !== "block") {
+                    dropdown.display = "block";
+                    //openDropdown(dropdown);
+                } else {
+                    dropdown.display = "none";
+                }
+            });
+        }
+        
+        hljs.configure({tabReplace: '    '});
+        hljs.initHighlightingOnLoad();
+    </script>
+</html>
