@@ -201,7 +201,7 @@
                         access: 'Open Access',
                         method: 'GET',
                         head: '[Test]',
-                        description: '[Test]'
+                        description: 'Returns a list of all the badges and descriptions. If it is authenticated as the user requested, it includes whether the user has that badge.'
                     },
                     {
                         endpoint: '/api/internal/user/badges/public',
@@ -710,8 +710,8 @@
                         endpoint: '/api/internal/signup/check-username',
                         access: 'Open Access', 
                         method: 'GET',
-                        head: '[Test]',
-                        description: '[Test]'
+                        head: 'Check if a username is avalible',
+                        description: 'Takes a <code>?username=&lt;username&gt;</code> paramater, and returns a 204 No Content if the username is available (not currently taken), and an error message otherwise. Possible responses include:<br><code>Usernames must start with a letter and only contain letters and numbers.</code><br><code>That username isn\'t available.</code></pre>'
                     }
                 ]
             },
